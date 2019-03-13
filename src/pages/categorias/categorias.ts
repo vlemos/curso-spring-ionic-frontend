@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { CategoriaService } from '../../services/domain/categoria.services';
 
 /**
  * Generated class for the CategoriasPage page.
@@ -15,11 +16,23 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class CategoriasPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-  }
+  constructor(public navCtrl: NavController, 
+    public navParams: NavParams,
+    public categoriaService : CategoriaService) {  }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CategoriasPage');
+    // isto é uma chamada assincrona, por isso, precisa programar uma função para executar a resposta da chamada
+    // isso é feito pelo subscribe()
+    // neste exemplo usamos uma função anônima, programando a função dentro da propria função subscribe()
+    this.categoriaService.findAll()
+    .subscribe(response => {
+        console.log(response)
+
+    },
+    error => {
+        console.log(error);
+    });
+
   }
 
 }
