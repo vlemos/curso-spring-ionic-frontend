@@ -56,5 +56,8 @@ ionViewDidEnter(){ //chama o refreshtoken caso o usuario ja se autenticou previa
   error => {})
 }
 
+signup(){
+  this.navCtrl.push('SignupPage');
+}
 
 }
