@@ -46,5 +46,15 @@ ionViewDidLeave(){
 
 }
 
+ionViewDidEnter(){ //chama o refreshtoken caso o usuario ja se autenticou previamente. 
+  this.auth.refreshToken()
+  .subscribe( response => {
+    this.auth.successfullLogin(response.headers.get('Authorization'));
+    this.navCtrl.setRoot('CategoriasPage');
+
+  }, 
+  error => {})
+}
+
 
 }

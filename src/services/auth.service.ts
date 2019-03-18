@@ -27,6 +27,20 @@ export class AuthService{
         )
     }
 
+
+    refreshToken(){
+        return this.http.post(
+             `${API_CONFIG.baseUrl}/auth/refresh_token`,
+             {},
+             {
+                 observe : 'response', // pega a resposta.. acesso ao hearder
+                 responseType: 'text' //evita o erro de parse no Json de um corpo vazio
+             }
+         )
+     }
+ 
+
+
     successfullLogin(authorizationValue : string){
         let tok = authorizationValue.substring(7); // remove a palavra bearer do token recebido
         let user : LocalUser = {
