@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CidadeService } from '../../services/domain/cidade.service';
 import { EstadoService } from '../../services/domain/estado.service';
 import { CidadeDTO } from '../../models/cidade.dto';
 import { EstadoDTO } from '../../models/estado.dto';
+import { ClienteService } from '../../services/domain/cliente.service';
 
 
 @IonicPage()
@@ -21,7 +22,9 @@ export class SignupPage {
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
-    public estadoService: EstadoService) {
+    public estadoService: EstadoService,
+    public clienteService: ClienteService,
+    public alertCtrl: AlertController) {
 
       this.formGroup = this.formBuilder.group({
         nome: ['Joaquim', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
@@ -42,7 +45,11 @@ export class SignupPage {
       });
   }
 signupUser(){
-  console.log("Enviou o Formulário");
+  this.clienteService.insert(this.formGroup.value)
+  .subscribe(response => {
+    this.showInsertOk();
+  }, 
+  error => {});  
 }
 
 ionViewDidLoad(){ // apos a tela carregar...
@@ -64,6 +71,25 @@ updateCidades(){
     this.cidades = response;
     this.formGroup.controls.cidadeId.setValue(null);
   })
+}
+
+
+showInsertOk(){
+  let alert = this.alertCtrl.create({
+    title: 'Sucesso',
+    message: 'Cadastro efetuado com Sucesso',
+    enableBackdropDismiss: false,
+    buttons: [
+      {
+        text: 'Ok',
+        handler: () => {
+          this.navCtrl.pop(); // desempilha a pagina, ja que a pagina foi empilahada
+        }
+      }
+    ]
+  });
+  alert.present();
+
 }
 
 }
