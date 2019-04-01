@@ -18,7 +18,8 @@ import { API_CONFIG } from '../../config/api.config';
 })
 export class ProdutosPage {
 
-  items: ProdutoDTO[];
+  items: ProdutoDTO[] = []; //inicinado a lista vazia;
+  page : number = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     public produtoService: ProdutoService,
@@ -34,19 +35,21 @@ export class ProdutosPage {
     let loader = this.presentLoading();
 
 
-    this.produtoService.findByCategoria(categoria_id).subscribe
+    this.produtoService.findByCategoria(categoria_id, this.page, 10).subscribe
     (response => {
-      this.items = response['content']; // pega somente o atributo content dentro da resposta.
+      let start = this.items.length;
+      this.items = this.items.concat(response['content']); // pega somente o atributo content dentro da resposta., concatenando a lista anterior
+      let end = this.items.length - 1;
       loader.dismiss();
-      this.loadImageUrls();
+      this.loadImageUrls(start,end);
     },
     error=> {
       loader.dismiss();
     });
   }
 
-  loadImageUrls(){
-    for(var i=0; i<this.items.length; i++){
+  loadImageUrls(start: number, end: number){
+    for(var i=start; i<=end; i++){
       let item = this.items[i];
       this.produtoService.getSmallImageFromBucket(item.id)
       .subscribe(response => {
@@ -72,12 +75,26 @@ export class ProdutosPage {
   }
 
   doRefresh(ionRefresh) {
+    this.page = 0;
+    this.items = []; // zera a lista para carregar ...
     this.loadData();
 
     setTimeout(() => {
     
       ionRefresh.complete();
     }, 2000);
+  }
+
+  doInfinite(ionInfinite){
+    this.page++;
+    this.loadData();
+
+    setTimeout(() => {
+      
+      ionInfinite.complete();
+     
+    }, 1000);
+
   }
 
 }
